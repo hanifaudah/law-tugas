@@ -1,6 +1,6 @@
 import express from "express";
 import "dotenv/config";
-import { PrismaClient } from "./prisma/generated/client";
+import { PrismaClient } from "../prisma/generated/client";
 
 // routes
 import rootRoutes from "./routes";
@@ -13,6 +13,8 @@ app.use(
 );
 
 app.use(express.json());
+
+console.log(process.env.B);
 
 app.use("/", rootRoutes);
 

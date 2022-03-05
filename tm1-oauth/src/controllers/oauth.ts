@@ -1,7 +1,6 @@
-import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { header, body, validationResult } from "express-validator";
-import { User, Token, ClientApp } from "../prisma/generated/client";
+import { User, Token, ClientApp } from "../../prisma/generated/client";
 import crypto from "crypto";
 import { prisma } from "../index";
 
@@ -54,8 +53,10 @@ const register = async (req: Request, res: Response): Promise<Response> => {
     }
 
     // hash password
-    const salt = bcrypt.genSaltSync(SALT_ROUNDS);
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    const hashedPassword = crypto
+      .createHash("sha256")
+      .update(password)
+      .digest("hex");
 
     const user: User = await prisma.user.create({
       data: { username, password: hashedPassword, fullName: full_name },
@@ -89,7 +90,10 @@ const token = async (req: Request, res: Response): Promise<Response> => {
         error: "invalid_request",
         error_description: "client id is invalid",
       });
-    } else if (!bcrypt.compareSync(client_secret, clientApp.clientSecret)) {
+    } else if (
+      crypto.createHash("sha256").update(client_secret).digest("hex") !==
+      clientApp.clientSecret
+    ) {
       return res.status(401).json({
         error: "invalid_request",
         error_description: "client secret is invalid",
@@ -106,10 +110,13 @@ const token = async (req: Request, res: Response): Promise<Response> => {
     }
 
     // validate password
-    const passwordIsValid: Boolean = bcrypt.compareSync(
-      password,
-      user.password
-    );
+    // hash password
+    const hashedPassword = crypto
+      .createHash("sha256")
+      .update(password)
+      .digest("hex");
+
+    const passwordIsValid: Boolean = hashedPassword == user.password;
     if (passwordIsValid) {
       const { token: accessToken }: Token = await prisma.token.create({
         data: {

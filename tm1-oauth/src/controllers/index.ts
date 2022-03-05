@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import oauth from "./oauth";
 import { header } from "express-validator";
 import { prisma } from "../index";
-import { Token, User } from "../prisma/generated/client";
+import { Token, User } from "../../prisma/generated/client";
 
 const middlewares = {
   validateToken: [
@@ -33,12 +33,10 @@ const middlewares = {
               where: { id: accessToken.userId },
             });
             if (!user) {
-              return res
-                .status(401)
-                .json({
-                  error: "invalid_request",
-                  error_description: "invalid credentials",
-                });
+              return res.status(401).json({
+                error: "invalid_request",
+                error_description: "invalid credentials",
+              });
             }
             req.user = user;
             next();
