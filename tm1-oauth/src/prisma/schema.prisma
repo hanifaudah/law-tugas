@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated/client"
 }
 
 datasource db {
@@ -22,6 +23,6 @@ model Token {
   type        String
   user        User        @relation(fields: [userId], references: [id])
   userId      Int
-  createdAt   DateTime    @default(now())
+  createdAt   DateTime?    @default(now())
 }
 
