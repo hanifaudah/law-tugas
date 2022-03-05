@@ -20,6 +20,7 @@ export type User = {
   id: number
   username: string
   password: string
+  fullName: string
 }
 
 /**
@@ -30,7 +31,19 @@ export type Token = {
   token: string
   type: string
   userId: number
+  clientId: string
   createdAt: Date | null
+}
+
+/**
+ * Model ClientApp
+ * 
+ */
+export type ClientApp = {
+  id: number
+  name: string
+  clientId: string
+  clientSecret: string
 }
 
 
@@ -193,6 +206,16 @@ export class PrismaClient<
     * ```
     */
   get token(): Prisma.TokenDelegate<GlobalReject>;
+
+  /**
+   * `prisma.clientApp`: Exposes CRUD operations for the **ClientApp** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ClientApps
+    * const clientApps = await prisma.clientApp.findMany()
+    * ```
+    */
+  get clientApp(): Prisma.ClientAppDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -608,7 +631,8 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
-    Token: 'Token'
+    Token: 'Token',
+    ClientApp: 'ClientApp'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -814,6 +838,55 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ClientAppCountOutputType
+   */
+
+
+  export type ClientAppCountOutputType = {
+    tokens: number
+  }
+
+  export type ClientAppCountOutputTypeSelect = {
+    tokens?: boolean
+  }
+
+  export type ClientAppCountOutputTypeGetPayload<
+    S extends boolean | null | undefined | ClientAppCountOutputTypeArgs,
+    U = keyof S
+      > = S extends true
+        ? ClientAppCountOutputType
+    : S extends undefined
+    ? never
+    : S extends ClientAppCountOutputTypeArgs
+    ?'include' extends U
+    ? ClientAppCountOutputType 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof ClientAppCountOutputType ? ClientAppCountOutputType[P] : never
+  } 
+    : ClientAppCountOutputType
+  : ClientAppCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * ClientAppCountOutputType without action
+   */
+  export type ClientAppCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the ClientAppCountOutputType
+     * 
+    **/
+    select?: ClientAppCountOutputTypeSelect | null
+  }
+
+
+
+  /**
    * Models
    */
 
@@ -842,18 +915,21 @@ export namespace Prisma {
     id: number | null
     username: string | null
     password: string | null
+    fullName: string | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: number | null
     username: string | null
     password: string | null
+    fullName: string | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
     username: number
     password: number
+    fullName: number
     _all: number
   }
 
@@ -870,18 +946,21 @@ export namespace Prisma {
     id?: true
     username?: true
     password?: true
+    fullName?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
     username?: true
     password?: true
+    fullName?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
     username?: true
     password?: true
+    fullName?: true
     _all?: true
   }
 
@@ -981,6 +1060,7 @@ export namespace Prisma {
     id: number
     username: string
     password: string
+    fullName: string
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1006,6 +1086,7 @@ export namespace Prisma {
     id?: boolean
     username?: boolean
     password?: boolean
+    fullName?: boolean
     tokens?: boolean | TokenFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
@@ -1728,6 +1809,7 @@ export namespace Prisma {
     token: string | null
     type: string | null
     userId: number | null
+    clientId: string | null
     createdAt: Date | null
   }
 
@@ -1735,6 +1817,7 @@ export namespace Prisma {
     token: string | null
     type: string | null
     userId: number | null
+    clientId: string | null
     createdAt: Date | null
   }
 
@@ -1742,6 +1825,7 @@ export namespace Prisma {
     token: number
     type: number
     userId: number
+    clientId: number
     createdAt: number
     _all: number
   }
@@ -1759,6 +1843,7 @@ export namespace Prisma {
     token?: true
     type?: true
     userId?: true
+    clientId?: true
     createdAt?: true
   }
 
@@ -1766,6 +1851,7 @@ export namespace Prisma {
     token?: true
     type?: true
     userId?: true
+    clientId?: true
     createdAt?: true
   }
 
@@ -1773,6 +1859,7 @@ export namespace Prisma {
     token?: true
     type?: true
     userId?: true
+    clientId?: true
     createdAt?: true
     _all?: true
   }
@@ -1873,6 +1960,7 @@ export namespace Prisma {
     token: string
     type: string
     userId: number
+    clientId: string
     createdAt: Date | null
     _count: TokenCountAggregateOutputType | null
     _avg: TokenAvgAggregateOutputType | null
@@ -1900,11 +1988,14 @@ export namespace Prisma {
     type?: boolean
     user?: boolean | UserArgs
     userId?: boolean
+    clientApp?: boolean | ClientAppArgs
+    clientId?: boolean
     createdAt?: boolean
   }
 
   export type TokenInclude = {
     user?: boolean | UserArgs
+    clientApp?: boolean | ClientAppArgs
   }
 
   export type TokenGetPayload<
@@ -1918,12 +2009,14 @@ export namespace Prisma {
     ?'include' extends U
     ? Token  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'user' ? UserGetPayload<S['include'][P]> :  never
+        P extends 'user' ? UserGetPayload<S['include'][P]> :
+        P extends 'clientApp' ? ClientAppGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'user' ? UserGetPayload<S['select'][P]> :  P extends keyof Token ? Token[P] : never
+        P extends 'user' ? UserGetPayload<S['select'][P]> :
+        P extends 'clientApp' ? ClientAppGetPayload<S['select'][P]> :  P extends keyof Token ? Token[P] : never
   } 
     : Token
   : Token
@@ -2265,6 +2358,8 @@ export namespace Prisma {
 
     user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
 
+    clientApp<T extends ClientAppArgs = {}>(args?: Subset<T, ClientAppArgs>): CheckSelect<T, Prisma__ClientAppClient<ClientApp | null >, Prisma__ClientAppClient<ClientAppGetPayload<T> | null >>;
+
     private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2594,6 +2689,900 @@ export namespace Prisma {
 
 
   /**
+   * Model ClientApp
+   */
+
+
+  export type AggregateClientApp = {
+    _count: ClientAppCountAggregateOutputType | null
+    _avg: ClientAppAvgAggregateOutputType | null
+    _sum: ClientAppSumAggregateOutputType | null
+    _min: ClientAppMinAggregateOutputType | null
+    _max: ClientAppMaxAggregateOutputType | null
+  }
+
+  export type ClientAppAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ClientAppSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ClientAppMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    clientId: string | null
+    clientSecret: string | null
+  }
+
+  export type ClientAppMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    clientId: string | null
+    clientSecret: string | null
+  }
+
+  export type ClientAppCountAggregateOutputType = {
+    id: number
+    name: number
+    clientId: number
+    clientSecret: number
+    _all: number
+  }
+
+
+  export type ClientAppAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type ClientAppSumAggregateInputType = {
+    id?: true
+  }
+
+  export type ClientAppMinAggregateInputType = {
+    id?: true
+    name?: true
+    clientId?: true
+    clientSecret?: true
+  }
+
+  export type ClientAppMaxAggregateInputType = {
+    id?: true
+    name?: true
+    clientId?: true
+    clientSecret?: true
+  }
+
+  export type ClientAppCountAggregateInputType = {
+    id?: true
+    name?: true
+    clientId?: true
+    clientSecret?: true
+    _all?: true
+  }
+
+  export type ClientAppAggregateArgs = {
+    /**
+     * Filter which ClientApp to aggregate.
+     * 
+    **/
+    where?: ClientAppWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ClientApps to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ClientAppOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: ClientAppWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ClientApps from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ClientApps.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ClientApps
+    **/
+    _count?: true | ClientAppCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ClientAppAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ClientAppSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ClientAppMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ClientAppMaxAggregateInputType
+  }
+
+  export type GetClientAppAggregateType<T extends ClientAppAggregateArgs> = {
+        [P in keyof T & keyof AggregateClientApp]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateClientApp[P]>
+      : GetScalarType<T[P], AggregateClientApp[P]>
+  }
+
+
+
+
+  export type ClientAppGroupByArgs = {
+    where?: ClientAppWhereInput
+    orderBy?: Enumerable<ClientAppOrderByWithAggregationInput>
+    by: Array<ClientAppScalarFieldEnum>
+    having?: ClientAppScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ClientAppCountAggregateInputType | true
+    _avg?: ClientAppAvgAggregateInputType
+    _sum?: ClientAppSumAggregateInputType
+    _min?: ClientAppMinAggregateInputType
+    _max?: ClientAppMaxAggregateInputType
+  }
+
+
+  export type ClientAppGroupByOutputType = {
+    id: number
+    name: string
+    clientId: string
+    clientSecret: string
+    _count: ClientAppCountAggregateOutputType | null
+    _avg: ClientAppAvgAggregateOutputType | null
+    _sum: ClientAppSumAggregateOutputType | null
+    _min: ClientAppMinAggregateOutputType | null
+    _max: ClientAppMaxAggregateOutputType | null
+  }
+
+  type GetClientAppGroupByPayload<T extends ClientAppGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<ClientAppGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ClientAppGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ClientAppGroupByOutputType[P]>
+            : GetScalarType<T[P], ClientAppGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ClientAppSelect = {
+    id?: boolean
+    name?: boolean
+    clientId?: boolean
+    clientSecret?: boolean
+    tokens?: boolean | TokenFindManyArgs
+    _count?: boolean | ClientAppCountOutputTypeArgs
+  }
+
+  export type ClientAppInclude = {
+    tokens?: boolean | TokenFindManyArgs
+    _count?: boolean | ClientAppCountOutputTypeArgs
+  }
+
+  export type ClientAppGetPayload<
+    S extends boolean | null | undefined | ClientAppArgs,
+    U = keyof S
+      > = S extends true
+        ? ClientApp
+    : S extends undefined
+    ? never
+    : S extends ClientAppArgs | ClientAppFindManyArgs
+    ?'include' extends U
+    ? ClientApp  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'tokens' ? Array < TokenGetPayload<S['include'][P]>>  :
+        P extends '_count' ? ClientAppCountOutputTypeGetPayload<S['include'][P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'tokens' ? Array < TokenGetPayload<S['select'][P]>>  :
+        P extends '_count' ? ClientAppCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof ClientApp ? ClientApp[P] : never
+  } 
+    : ClientApp
+  : ClientApp
+
+
+  type ClientAppCountArgs = Merge<
+    Omit<ClientAppFindManyArgs, 'select' | 'include'> & {
+      select?: ClientAppCountAggregateInputType | true
+    }
+  >
+
+  export interface ClientAppDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one ClientApp that matches the filter.
+     * @param {ClientAppFindUniqueArgs} args - Arguments to find a ClientApp
+     * @example
+     * // Get one ClientApp
+     * const clientApp = await prisma.clientApp.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends ClientAppFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, ClientAppFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'ClientApp'> extends True ? CheckSelect<T, Prisma__ClientAppClient<ClientApp>, Prisma__ClientAppClient<ClientAppGetPayload<T>>> : CheckSelect<T, Prisma__ClientAppClient<ClientApp | null >, Prisma__ClientAppClient<ClientAppGetPayload<T> | null >>
+
+    /**
+     * Find the first ClientApp that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientAppFindFirstArgs} args - Arguments to find a ClientApp
+     * @example
+     * // Get one ClientApp
+     * const clientApp = await prisma.clientApp.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends ClientAppFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, ClientAppFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'ClientApp'> extends True ? CheckSelect<T, Prisma__ClientAppClient<ClientApp>, Prisma__ClientAppClient<ClientAppGetPayload<T>>> : CheckSelect<T, Prisma__ClientAppClient<ClientApp | null >, Prisma__ClientAppClient<ClientAppGetPayload<T> | null >>
+
+    /**
+     * Find zero or more ClientApps that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientAppFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ClientApps
+     * const clientApps = await prisma.clientApp.findMany()
+     * 
+     * // Get first 10 ClientApps
+     * const clientApps = await prisma.clientApp.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const clientAppWithIdOnly = await prisma.clientApp.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends ClientAppFindManyArgs>(
+      args?: SelectSubset<T, ClientAppFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<ClientApp>>, PrismaPromise<Array<ClientAppGetPayload<T>>>>
+
+    /**
+     * Create a ClientApp.
+     * @param {ClientAppCreateArgs} args - Arguments to create a ClientApp.
+     * @example
+     * // Create one ClientApp
+     * const ClientApp = await prisma.clientApp.create({
+     *   data: {
+     *     // ... data to create a ClientApp
+     *   }
+     * })
+     * 
+    **/
+    create<T extends ClientAppCreateArgs>(
+      args: SelectSubset<T, ClientAppCreateArgs>
+    ): CheckSelect<T, Prisma__ClientAppClient<ClientApp>, Prisma__ClientAppClient<ClientAppGetPayload<T>>>
+
+    /**
+     * Create many ClientApps.
+     *     @param {ClientAppCreateManyArgs} args - Arguments to create many ClientApps.
+     *     @example
+     *     // Create many ClientApps
+     *     const clientApp = await prisma.clientApp.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends ClientAppCreateManyArgs>(
+      args?: SelectSubset<T, ClientAppCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a ClientApp.
+     * @param {ClientAppDeleteArgs} args - Arguments to delete one ClientApp.
+     * @example
+     * // Delete one ClientApp
+     * const ClientApp = await prisma.clientApp.delete({
+     *   where: {
+     *     // ... filter to delete one ClientApp
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends ClientAppDeleteArgs>(
+      args: SelectSubset<T, ClientAppDeleteArgs>
+    ): CheckSelect<T, Prisma__ClientAppClient<ClientApp>, Prisma__ClientAppClient<ClientAppGetPayload<T>>>
+
+    /**
+     * Update one ClientApp.
+     * @param {ClientAppUpdateArgs} args - Arguments to update one ClientApp.
+     * @example
+     * // Update one ClientApp
+     * const clientApp = await prisma.clientApp.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends ClientAppUpdateArgs>(
+      args: SelectSubset<T, ClientAppUpdateArgs>
+    ): CheckSelect<T, Prisma__ClientAppClient<ClientApp>, Prisma__ClientAppClient<ClientAppGetPayload<T>>>
+
+    /**
+     * Delete zero or more ClientApps.
+     * @param {ClientAppDeleteManyArgs} args - Arguments to filter ClientApps to delete.
+     * @example
+     * // Delete a few ClientApps
+     * const { count } = await prisma.clientApp.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends ClientAppDeleteManyArgs>(
+      args?: SelectSubset<T, ClientAppDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ClientApps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientAppUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ClientApps
+     * const clientApp = await prisma.clientApp.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends ClientAppUpdateManyArgs>(
+      args: SelectSubset<T, ClientAppUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ClientApp.
+     * @param {ClientAppUpsertArgs} args - Arguments to update or create a ClientApp.
+     * @example
+     * // Update or create a ClientApp
+     * const clientApp = await prisma.clientApp.upsert({
+     *   create: {
+     *     // ... data to create a ClientApp
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ClientApp we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends ClientAppUpsertArgs>(
+      args: SelectSubset<T, ClientAppUpsertArgs>
+    ): CheckSelect<T, Prisma__ClientAppClient<ClientApp>, Prisma__ClientAppClient<ClientAppGetPayload<T>>>
+
+    /**
+     * Count the number of ClientApps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientAppCountArgs} args - Arguments to filter ClientApps to count.
+     * @example
+     * // Count the number of ClientApps
+     * const count = await prisma.clientApp.count({
+     *   where: {
+     *     // ... the filter for the ClientApps we want to count
+     *   }
+     * })
+    **/
+    count<T extends ClientAppCountArgs>(
+      args?: Subset<T, ClientAppCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ClientAppCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ClientApp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientAppAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ClientAppAggregateArgs>(args: Subset<T, ClientAppAggregateArgs>): PrismaPromise<GetClientAppAggregateType<T>>
+
+    /**
+     * Group by ClientApp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientAppGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ClientAppGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ClientAppGroupByArgs['orderBy'] }
+        : { orderBy?: ClientAppGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ClientAppGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetClientAppGroupByPayload<T> : PrismaPromise<InputErrors>
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ClientApp.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__ClientAppClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    tokens<T extends TokenFindManyArgs = {}>(args?: Subset<T, TokenFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Token>>, PrismaPromise<Array<TokenGetPayload<T>>>>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+  // Custom InputTypes
+
+  /**
+   * ClientApp findUnique
+   */
+  export type ClientAppFindUniqueArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+    /**
+     * Throw an Error if a ClientApp can't be found
+     * 
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which ClientApp to fetch.
+     * 
+    **/
+    where: ClientAppWhereUniqueInput
+  }
+
+
+  /**
+   * ClientApp findFirst
+   */
+  export type ClientAppFindFirstArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+    /**
+     * Throw an Error if a ClientApp can't be found
+     * 
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which ClientApp to fetch.
+     * 
+    **/
+    where?: ClientAppWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ClientApps to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ClientAppOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ClientApps.
+     * 
+    **/
+    cursor?: ClientAppWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ClientApps from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ClientApps.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ClientApps.
+     * 
+    **/
+    distinct?: Enumerable<ClientAppScalarFieldEnum>
+  }
+
+
+  /**
+   * ClientApp findMany
+   */
+  export type ClientAppFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+    /**
+     * Filter, which ClientApps to fetch.
+     * 
+    **/
+    where?: ClientAppWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ClientApps to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ClientAppOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ClientApps.
+     * 
+    **/
+    cursor?: ClientAppWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ClientApps from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ClientApps.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<ClientAppScalarFieldEnum>
+  }
+
+
+  /**
+   * ClientApp create
+   */
+  export type ClientAppCreateArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+    /**
+     * The data needed to create a ClientApp.
+     * 
+    **/
+    data: XOR<ClientAppCreateInput, ClientAppUncheckedCreateInput>
+  }
+
+
+  /**
+   * ClientApp createMany
+   */
+  export type ClientAppCreateManyArgs = {
+    /**
+     * The data used to create many ClientApps.
+     * 
+    **/
+    data: Enumerable<ClientAppCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * ClientApp update
+   */
+  export type ClientAppUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+    /**
+     * The data needed to update a ClientApp.
+     * 
+    **/
+    data: XOR<ClientAppUpdateInput, ClientAppUncheckedUpdateInput>
+    /**
+     * Choose, which ClientApp to update.
+     * 
+    **/
+    where: ClientAppWhereUniqueInput
+  }
+
+
+  /**
+   * ClientApp updateMany
+   */
+  export type ClientAppUpdateManyArgs = {
+    /**
+     * The data used to update ClientApps.
+     * 
+    **/
+    data: XOR<ClientAppUpdateManyMutationInput, ClientAppUncheckedUpdateManyInput>
+    /**
+     * Filter which ClientApps to update
+     * 
+    **/
+    where?: ClientAppWhereInput
+  }
+
+
+  /**
+   * ClientApp upsert
+   */
+  export type ClientAppUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+    /**
+     * The filter to search for the ClientApp to update in case it exists.
+     * 
+    **/
+    where: ClientAppWhereUniqueInput
+    /**
+     * In case the ClientApp found by the `where` argument doesn't exist, create a new ClientApp with this data.
+     * 
+    **/
+    create: XOR<ClientAppCreateInput, ClientAppUncheckedCreateInput>
+    /**
+     * In case the ClientApp was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<ClientAppUpdateInput, ClientAppUncheckedUpdateInput>
+  }
+
+
+  /**
+   * ClientApp delete
+   */
+  export type ClientAppDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+    /**
+     * Filter which ClientApp to delete.
+     * 
+    **/
+    where: ClientAppWhereUniqueInput
+  }
+
+
+  /**
+   * ClientApp deleteMany
+   */
+  export type ClientAppDeleteManyArgs = {
+    /**
+     * Filter which ClientApps to delete
+     * 
+    **/
+    where?: ClientAppWhereInput
+  }
+
+
+  /**
+   * ClientApp without action
+   */
+  export type ClientAppArgs = {
+    /**
+     * Select specific fields to fetch from the ClientApp
+     * 
+    **/
+    select?: ClientAppSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ClientAppInclude | null
+  }
+
+
+
+  /**
    * Enums
    */
 
@@ -2603,7 +3592,8 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     username: 'username',
-    password: 'password'
+    password: 'password',
+    fullName: 'fullName'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -2613,10 +3603,21 @@ export namespace Prisma {
     token: 'token',
     type: 'type',
     userId: 'userId',
+    clientId: 'clientId',
     createdAt: 'createdAt'
   };
 
   export type TokenScalarFieldEnum = (typeof TokenScalarFieldEnum)[keyof typeof TokenScalarFieldEnum]
+
+
+  export const ClientAppScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    clientId: 'clientId',
+    clientSecret: 'clientSecret'
+  };
+
+  export type ClientAppScalarFieldEnum = (typeof ClientAppScalarFieldEnum)[keyof typeof ClientAppScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -2647,6 +3648,7 @@ export namespace Prisma {
     id?: IntFilter | number
     username?: StringFilter | string
     password?: StringFilter | string
+    fullName?: StringFilter | string
     tokens?: TokenListRelationFilter
   }
 
@@ -2654,6 +3656,7 @@ export namespace Prisma {
     id?: SortOrder
     username?: SortOrder
     password?: SortOrder
+    fullName?: SortOrder
     tokens?: TokenOrderByRelationAggregateInput
   }
 
@@ -2666,6 +3669,7 @@ export namespace Prisma {
     id?: SortOrder
     username?: SortOrder
     password?: SortOrder
+    fullName?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -2680,6 +3684,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter | number
     username?: StringWithAggregatesFilter | string
     password?: StringWithAggregatesFilter | string
+    fullName?: StringWithAggregatesFilter | string
   }
 
   export type TokenWhereInput = {
@@ -2690,6 +3695,8 @@ export namespace Prisma {
     type?: StringFilter | string
     user?: XOR<UserRelationFilter, UserWhereInput>
     userId?: IntFilter | number
+    clientApp?: XOR<ClientAppRelationFilter, ClientAppWhereInput>
+    clientId?: StringFilter | string
     createdAt?: DateTimeNullableFilter | Date | string | null
   }
 
@@ -2698,6 +3705,8 @@ export namespace Prisma {
     type?: SortOrder
     user?: UserOrderByWithRelationInput
     userId?: SortOrder
+    clientApp?: ClientAppOrderByWithRelationInput
+    clientId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -2709,6 +3718,7 @@ export namespace Prisma {
     token?: SortOrder
     type?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrder
     createdAt?: SortOrder
     _count?: TokenCountOrderByAggregateInput
     _avg?: TokenAvgOrderByAggregateInput
@@ -2724,12 +3734,60 @@ export namespace Prisma {
     token?: StringWithAggregatesFilter | string
     type?: StringWithAggregatesFilter | string
     userId?: IntWithAggregatesFilter | number
+    clientId?: StringWithAggregatesFilter | string
     createdAt?: DateTimeNullableWithAggregatesFilter | Date | string | null
+  }
+
+  export type ClientAppWhereInput = {
+    AND?: Enumerable<ClientAppWhereInput>
+    OR?: Enumerable<ClientAppWhereInput>
+    NOT?: Enumerable<ClientAppWhereInput>
+    id?: IntFilter | number
+    name?: StringFilter | string
+    clientId?: StringFilter | string
+    clientSecret?: StringFilter | string
+    tokens?: TokenListRelationFilter
+  }
+
+  export type ClientAppOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+    tokens?: TokenOrderByRelationAggregateInput
+  }
+
+  export type ClientAppWhereUniqueInput = {
+    id?: number
+    clientId?: string
+  }
+
+  export type ClientAppOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+    _count?: ClientAppCountOrderByAggregateInput
+    _avg?: ClientAppAvgOrderByAggregateInput
+    _max?: ClientAppMaxOrderByAggregateInput
+    _min?: ClientAppMinOrderByAggregateInput
+    _sum?: ClientAppSumOrderByAggregateInput
+  }
+
+  export type ClientAppScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<ClientAppScalarWhereWithAggregatesInput>
+    OR?: Enumerable<ClientAppScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<ClientAppScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    name?: StringWithAggregatesFilter | string
+    clientId?: StringWithAggregatesFilter | string
+    clientSecret?: StringWithAggregatesFilter | string
   }
 
   export type UserCreateInput = {
     username: string
     password: string
+    fullName: string
     tokens?: TokenCreateNestedManyWithoutUserInput
   }
 
@@ -2737,12 +3795,14 @@ export namespace Prisma {
     id?: number
     username: string
     password: string
+    fullName: string
     tokens?: TokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     tokens?: TokenUpdateManyWithoutUserInput
   }
 
@@ -2750,6 +3810,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     tokens?: TokenUncheckedUpdateManyWithoutUserInput
   }
 
@@ -2757,23 +3818,27 @@ export namespace Prisma {
     id?: number
     username: string
     password: string
+    fullName: string
   }
 
   export type UserUpdateManyMutationInput = {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
   }
 
   export type TokenCreateInput = {
     token: string
     type: string
     user: UserCreateNestedOneWithoutTokensInput
+    clientApp: ClientAppCreateNestedOneWithoutTokensInput
     createdAt?: Date | string | null
   }
 
@@ -2781,6 +3846,7 @@ export namespace Prisma {
     token: string
     type: string
     userId: number
+    clientId: string
     createdAt?: Date | string | null
   }
 
@@ -2788,6 +3854,7 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutTokensInput
+    clientApp?: ClientAppUpdateOneRequiredWithoutTokensInput
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -2795,6 +3862,7 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
+    clientId?: StringFieldUpdateOperationsInput | string
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -2802,6 +3870,7 @@ export namespace Prisma {
     token: string
     type: string
     userId: number
+    clientId: string
     createdAt?: Date | string | null
   }
 
@@ -2815,7 +3884,58 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
+    clientId?: StringFieldUpdateOperationsInput | string
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ClientAppCreateInput = {
+    name: string
+    clientId: string
+    clientSecret: string
+    tokens?: TokenCreateNestedManyWithoutClientAppInput
+  }
+
+  export type ClientAppUncheckedCreateInput = {
+    id?: number
+    name: string
+    clientId: string
+    clientSecret: string
+    tokens?: TokenUncheckedCreateNestedManyWithoutClientAppInput
+  }
+
+  export type ClientAppUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: StringFieldUpdateOperationsInput | string
+    tokens?: TokenUpdateManyWithoutClientAppInput
+  }
+
+  export type ClientAppUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: StringFieldUpdateOperationsInput | string
+    tokens?: TokenUncheckedUpdateManyWithoutClientAppInput
+  }
+
+  export type ClientAppCreateManyInput = {
+    id?: number
+    name: string
+    clientId: string
+    clientSecret: string
+  }
+
+  export type ClientAppUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ClientAppUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: StringFieldUpdateOperationsInput | string
   }
 
   export type IntFilter = {
@@ -2858,6 +3978,7 @@ export namespace Prisma {
     id?: SortOrder
     username?: SortOrder
     password?: SortOrder
+    fullName?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -2868,12 +3989,14 @@ export namespace Prisma {
     id?: SortOrder
     username?: SortOrder
     password?: SortOrder
+    fullName?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
     password?: SortOrder
+    fullName?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -2919,6 +4042,11 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
+  export type ClientAppRelationFilter = {
+    is?: ClientAppWhereInput
+    isNot?: ClientAppWhereInput
+  }
+
   export type DateTimeNullableFilter = {
     equals?: Date | string | null
     in?: Enumerable<Date> | Enumerable<string> | null
@@ -2934,6 +4062,7 @@ export namespace Prisma {
     token?: SortOrder
     type?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -2945,6 +4074,7 @@ export namespace Prisma {
     token?: SortOrder
     type?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -2952,6 +4082,7 @@ export namespace Prisma {
     token?: SortOrder
     type?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -2971,6 +4102,35 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter
     _min?: NestedDateTimeNullableFilter
     _max?: NestedDateTimeNullableFilter
+  }
+
+  export type ClientAppCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+  }
+
+  export type ClientAppAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type ClientAppMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+  }
+
+  export type ClientAppMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+  }
+
+  export type ClientAppSumOrderByAggregateInput = {
+    id?: SortOrder
   }
 
   export type TokenCreateNestedManyWithoutUserInput = {
@@ -3033,6 +4193,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type ClientAppCreateNestedOneWithoutTokensInput = {
+    create?: XOR<ClientAppCreateWithoutTokensInput, ClientAppUncheckedCreateWithoutTokensInput>
+    connectOrCreate?: ClientAppCreateOrConnectWithoutTokensInput
+    connect?: ClientAppWhereUniqueInput
+  }
+
   export type UserUpdateOneRequiredWithoutTokensInput = {
     create?: XOR<UserCreateWithoutTokensInput, UserUncheckedCreateWithoutTokensInput>
     connectOrCreate?: UserCreateOrConnectWithoutTokensInput
@@ -3041,8 +4207,58 @@ export namespace Prisma {
     update?: XOR<UserUpdateWithoutTokensInput, UserUncheckedUpdateWithoutTokensInput>
   }
 
+  export type ClientAppUpdateOneRequiredWithoutTokensInput = {
+    create?: XOR<ClientAppCreateWithoutTokensInput, ClientAppUncheckedCreateWithoutTokensInput>
+    connectOrCreate?: ClientAppCreateOrConnectWithoutTokensInput
+    upsert?: ClientAppUpsertWithoutTokensInput
+    connect?: ClientAppWhereUniqueInput
+    update?: XOR<ClientAppUpdateWithoutTokensInput, ClientAppUncheckedUpdateWithoutTokensInput>
+  }
+
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type TokenCreateNestedManyWithoutClientAppInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutClientAppInput>, Enumerable<TokenUncheckedCreateWithoutClientAppInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutClientAppInput>
+    createMany?: TokenCreateManyClientAppInputEnvelope
+    connect?: Enumerable<TokenWhereUniqueInput>
+  }
+
+  export type TokenUncheckedCreateNestedManyWithoutClientAppInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutClientAppInput>, Enumerable<TokenUncheckedCreateWithoutClientAppInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutClientAppInput>
+    createMany?: TokenCreateManyClientAppInputEnvelope
+    connect?: Enumerable<TokenWhereUniqueInput>
+  }
+
+  export type TokenUpdateManyWithoutClientAppInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutClientAppInput>, Enumerable<TokenUncheckedCreateWithoutClientAppInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutClientAppInput>
+    upsert?: Enumerable<TokenUpsertWithWhereUniqueWithoutClientAppInput>
+    createMany?: TokenCreateManyClientAppInputEnvelope
+    set?: Enumerable<TokenWhereUniqueInput>
+    disconnect?: Enumerable<TokenWhereUniqueInput>
+    delete?: Enumerable<TokenWhereUniqueInput>
+    connect?: Enumerable<TokenWhereUniqueInput>
+    update?: Enumerable<TokenUpdateWithWhereUniqueWithoutClientAppInput>
+    updateMany?: Enumerable<TokenUpdateManyWithWhereWithoutClientAppInput>
+    deleteMany?: Enumerable<TokenScalarWhereInput>
+  }
+
+  export type TokenUncheckedUpdateManyWithoutClientAppInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutClientAppInput>, Enumerable<TokenUncheckedCreateWithoutClientAppInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutClientAppInput>
+    upsert?: Enumerable<TokenUpsertWithWhereUniqueWithoutClientAppInput>
+    createMany?: TokenCreateManyClientAppInputEnvelope
+    set?: Enumerable<TokenWhereUniqueInput>
+    disconnect?: Enumerable<TokenWhereUniqueInput>
+    delete?: Enumerable<TokenWhereUniqueInput>
+    connect?: Enumerable<TokenWhereUniqueInput>
+    update?: Enumerable<TokenUpdateWithWhereUniqueWithoutClientAppInput>
+    updateMany?: Enumerable<TokenUpdateManyWithWhereWithoutClientAppInput>
+    deleteMany?: Enumerable<TokenScalarWhereInput>
   }
 
   export type NestedIntFilter = {
@@ -3153,12 +4369,14 @@ export namespace Prisma {
   export type TokenCreateWithoutUserInput = {
     token: string
     type: string
+    clientApp: ClientAppCreateNestedOneWithoutTokensInput
     createdAt?: Date | string | null
   }
 
   export type TokenUncheckedCreateWithoutUserInput = {
     token: string
     type: string
+    clientId: string
     createdAt?: Date | string | null
   }
 
@@ -3195,23 +4413,44 @@ export namespace Prisma {
     token?: StringFilter | string
     type?: StringFilter | string
     userId?: IntFilter | number
+    clientId?: StringFilter | string
     createdAt?: DateTimeNullableFilter | Date | string | null
   }
 
   export type UserCreateWithoutTokensInput = {
     username: string
     password: string
+    fullName: string
   }
 
   export type UserUncheckedCreateWithoutTokensInput = {
     id?: number
     username: string
     password: string
+    fullName: string
   }
 
   export type UserCreateOrConnectWithoutTokensInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutTokensInput, UserUncheckedCreateWithoutTokensInput>
+  }
+
+  export type ClientAppCreateWithoutTokensInput = {
+    name: string
+    clientId: string
+    clientSecret: string
+  }
+
+  export type ClientAppUncheckedCreateWithoutTokensInput = {
+    id?: number
+    name: string
+    clientId: string
+    clientSecret: string
+  }
+
+  export type ClientAppCreateOrConnectWithoutTokensInput = {
+    where: ClientAppWhereUniqueInput
+    create: XOR<ClientAppCreateWithoutTokensInput, ClientAppUncheckedCreateWithoutTokensInput>
   }
 
   export type UserUpsertWithoutTokensInput = {
@@ -3222,35 +4461,120 @@ export namespace Prisma {
   export type UserUpdateWithoutTokensInput = {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateWithoutTokensInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ClientAppUpsertWithoutTokensInput = {
+    update: XOR<ClientAppUpdateWithoutTokensInput, ClientAppUncheckedUpdateWithoutTokensInput>
+    create: XOR<ClientAppCreateWithoutTokensInput, ClientAppUncheckedCreateWithoutTokensInput>
+  }
+
+  export type ClientAppUpdateWithoutTokensInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ClientAppUncheckedUpdateWithoutTokensInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TokenCreateWithoutClientAppInput = {
+    token: string
+    type: string
+    user: UserCreateNestedOneWithoutTokensInput
+    createdAt?: Date | string | null
+  }
+
+  export type TokenUncheckedCreateWithoutClientAppInput = {
+    token: string
+    type: string
+    userId: number
+    createdAt?: Date | string | null
+  }
+
+  export type TokenCreateOrConnectWithoutClientAppInput = {
+    where: TokenWhereUniqueInput
+    create: XOR<TokenCreateWithoutClientAppInput, TokenUncheckedCreateWithoutClientAppInput>
+  }
+
+  export type TokenCreateManyClientAppInputEnvelope = {
+    data: Enumerable<TokenCreateManyClientAppInput>
+    skipDuplicates?: boolean
+  }
+
+  export type TokenUpsertWithWhereUniqueWithoutClientAppInput = {
+    where: TokenWhereUniqueInput
+    update: XOR<TokenUpdateWithoutClientAppInput, TokenUncheckedUpdateWithoutClientAppInput>
+    create: XOR<TokenCreateWithoutClientAppInput, TokenUncheckedCreateWithoutClientAppInput>
+  }
+
+  export type TokenUpdateWithWhereUniqueWithoutClientAppInput = {
+    where: TokenWhereUniqueInput
+    data: XOR<TokenUpdateWithoutClientAppInput, TokenUncheckedUpdateWithoutClientAppInput>
+  }
+
+  export type TokenUpdateManyWithWhereWithoutClientAppInput = {
+    where: TokenScalarWhereInput
+    data: XOR<TokenUpdateManyMutationInput, TokenUncheckedUpdateManyWithoutTokensInput>
   }
 
   export type TokenCreateManyUserInput = {
     token: string
     type: string
+    clientId: string
     createdAt?: Date | string | null
   }
 
   export type TokenUpdateWithoutUserInput = {
     token?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    clientApp?: ClientAppUpdateOneRequiredWithoutTokensInput
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TokenUncheckedUpdateWithoutUserInput = {
     token?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TokenUncheckedUpdateManyWithoutTokensInput = {
     token?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TokenCreateManyClientAppInput = {
+    token: string
+    type: string
+    userId: number
+    createdAt?: Date | string | null
+  }
+
+  export type TokenUpdateWithoutClientAppInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    user?: UserUpdateOneRequiredWithoutTokensInput
+    createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TokenUncheckedUpdateWithoutClientAppInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    userId?: IntFieldUpdateOperationsInput | number
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 

@@ -79,14 +79,23 @@ function makeEnum(x) { return x; }
 exports.Prisma.UserScalarFieldEnum = makeEnum({
   id: 'id',
   username: 'username',
-  password: 'password'
+  password: 'password',
+  fullName: 'fullName'
 });
 
 exports.Prisma.TokenScalarFieldEnum = makeEnum({
   token: 'token',
   type: 'type',
   userId: 'userId',
+  clientId: 'clientId',
   createdAt: 'createdAt'
+});
+
+exports.Prisma.ClientAppScalarFieldEnum = makeEnum({
+  id: 'id',
+  name: 'name',
+  clientId: 'clientId',
+  clientSecret: 'clientSecret'
 });
 
 exports.Prisma.SortOrder = makeEnum({
@@ -102,7 +111,8 @@ exports.Prisma.QueryMode = makeEnum({
 
 exports.Prisma.ModelName = makeEnum({
   User: 'User',
-  Token: 'Token'
+  Token: 'Token',
+  ClientApp: 'ClientApp'
 });
 
 /**

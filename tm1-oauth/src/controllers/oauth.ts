@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { header, body, validationResult } from "express-validator";
-import { User, Token } from "../prisma/generated/client";
+import { User, Token, ClientApp } from "../prisma/generated/client";
 import crypto from "crypto";
 import { prisma } from "../index";
 
@@ -16,6 +16,9 @@ const validators = {
     body("password")
       .exists({ checkFalsy: true })
       .withMessage("password is required"),
+    body("full_name")
+      .exists({ checkFalsy: true })
+      .withMessage("full name is required"),
   ],
   token: [
     header("content-type").equals("application/x-www-form-urlencoded"),
@@ -38,7 +41,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
       return res.status(400).json({ error: errors.array() });
     }
 
-    const { username, password } = req.body;
+    const { username, password, full_name } = req.body;
 
     // check if user exists
     const userExists =
@@ -52,7 +55,7 @@ const register = async (req: Request, res: Response): Promise<Response> => {
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     const user: User = await prisma.user.create({
-      data: { username, password: hashedPassword },
+      data: { username, password: hashedPassword, fullName: full_name },
     });
     const { password: _, ...cleanedData } = user;
     return res.status(201).json(cleanedData);
@@ -71,6 +74,17 @@ const token = async (req: Request, res: Response): Promise<Response> => {
     const { username, password, grant_type, client_id, client_secret } =
       req.body;
 
+    // validate client app
+    const clientApp: ClientApp | null = await prisma.clientApp.findUnique({
+      where: { clientId: client_id },
+    });
+
+    if (!clientApp) {
+      return res.status(404).json({ error: "client id is invalid" });
+    } else if (!bcrypt.compareSync(client_secret, clientApp.clientSecret)) {
+      return res.status(401).json({ error: "client secret is invalid" });
+    }
+
     // find user
     const user = await prisma.user.findUnique({ where: { username } });
     if (!user) {
@@ -83,13 +97,12 @@ const token = async (req: Request, res: Response): Promise<Response> => {
       user.password
     );
     if (passwordIsValid) {
-      if (!process.env.SECRET) throw new Error("SECRET is undefined");
-
       const { token: accessToken }: Token = await prisma.token.create({
         data: {
           token: crypto.randomBytes(TOKEN_LENGTH_BYTES).toString("hex"),
           type: "access",
           userId: user.id,
+          clientId: clientApp.clientId,
         },
       });
       const { token: refreshToken }: Token = await prisma.token.create({
@@ -97,6 +110,7 @@ const token = async (req: Request, res: Response): Promise<Response> => {
           token: crypto.randomBytes(TOKEN_LENGTH_BYTES).toString("hex"),
           type: "refresh",
           userId: user.id,
+          clientId: clientApp.clientId,
         },
       });
       return res.status(200).json({
@@ -116,9 +130,35 @@ const token = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-const resource = (req: Request, res: Response) => {
+const resource = async (req: Request, res: Response) => {
   try {
-    // validate token
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() });
+    }
+    const user = req.user;
+    const rawToken = req.header("authorization") || "";
+    const accessToken: Token | null = await prisma.token.findUnique({
+      where: {
+        token: rawToken.split(" ")[1],
+      },
+    });
+    const refreshToken: Token | null = await prisma.token.findFirst({
+      where: {
+        user,
+        AND: { type: "refresh", clientId: accessToken?.clientId },
+      },
+      orderBy: [{ createdAt: "desc" }],
+    });
+    return res.status(200).json({
+      access_token: accessToken?.token,
+      client_id: accessToken?.clientId,
+      user_id: user?.id,
+      full_name: user?.fullName,
+      npm: "1906293070",
+      expires: null,
+      refresh_token: refreshToken?.token,
+    });
   } catch (error) {
     return res.status(500).json({ error: "server_error" });
   }
@@ -127,5 +167,6 @@ const resource = (req: Request, res: Response) => {
 export default {
   register,
   token,
+  resource,
   validators,
 };

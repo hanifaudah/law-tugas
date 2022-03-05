@@ -9,9 +9,11 @@ oauthRoutes.post(
   controllers.oauth.token
 );
 
-oauthRoutes.post("/resource", (req, res) => {
-  res.send("Resource");
-});
+oauthRoutes.post(
+  "/resource",
+  controllers.middlewares.validateToken,
+  controllers.oauth.resource
+);
 
 oauthRoutes.post(
   "/register",

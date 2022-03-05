@@ -15,6 +15,7 @@ model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
   password  String
+  fullName  String
   tokens    Token[]
 }
 
@@ -23,6 +24,16 @@ model Token {
   type        String
   user        User        @relation(fields: [userId], references: [id])
   userId      Int
-  createdAt   DateTime?    @default(now())
+  clientApp   ClientApp   @relation(fields: [clientId], references: [clientId])
+  clientId    String
+  createdAt   DateTime?   @default(now())
+}
+
+model ClientApp {
+  id            Int      @id @default(autoincrement())
+  name          String
+  clientId      String   @unique
+  clientSecret  String
+  tokens        Token[]
 }
 

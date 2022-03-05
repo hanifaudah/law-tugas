@@ -5,5 +5,9 @@
     "strict": true,
     "lib": ["esnext"],
     "esModuleInterop": true
-  }
+  },
+  "ts-node": {
+    "files": true
+  },
+  "files": ["global.d.ts"]
 }
