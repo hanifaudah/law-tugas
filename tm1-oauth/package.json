@@ -1,0 +1,32 @@
+{
+  "name": "tm1-oauth",
+  "version": "1.0.0",
+  "description": "Tugas Mandiri LAW Materi OAuth",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hanif Arkan Audah",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^3.10.0",
+    "bcrypt": "^5.0.1",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-validator": "^6.14.0",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/node": "^17.0.21",
+    "prisma": "^3.10.0",
+    "ts-node": "^10.6.0",
+    "typescript": "^4.6.2",
+    "@types/express": "^4.17.13"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  }
+}
