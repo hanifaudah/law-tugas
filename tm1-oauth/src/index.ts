@@ -14,8 +14,6 @@ app.use(
 
 app.use(express.json());
 
-console.log(process.env.B);
-
 app.use("/", rootRoutes);
 
 export const prisma = new PrismaClient();
