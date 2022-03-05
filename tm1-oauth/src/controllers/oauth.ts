@@ -38,7 +38,10 @@ const register = async (req: Request, res: Response): Promise<Response> => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array() });
+      return res.status(401).json({
+        error: "invalid_request",
+        error_description: errors.array(),
+      });
     }
 
     const { username, password, full_name } = req.body;
@@ -68,7 +71,9 @@ const token = async (req: Request, res: Response): Promise<Response> => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array() });
+      return res
+        .status(401)
+        .json({ error: "invalid_request", error_description: errors.array() });
     }
 
     const { username, password, grant_type, client_id, client_secret } =
@@ -80,15 +85,24 @@ const token = async (req: Request, res: Response): Promise<Response> => {
     });
 
     if (!clientApp) {
-      return res.status(404).json({ error: "client id is invalid" });
+      return res.status(401).json({
+        error: "invalid_request",
+        error_description: "client id is invalid",
+      });
     } else if (!bcrypt.compareSync(client_secret, clientApp.clientSecret)) {
-      return res.status(401).json({ error: "client secret is invalid" });
+      return res.status(401).json({
+        error: "invalid_request",
+        error_description: "client secret is invalid",
+      });
     }
 
     // find user
     const user = await prisma.user.findUnique({ where: { username } });
     if (!user) {
-      return res.status(404).json({ error: "user does not exist" });
+      return res.status(401).json({
+        error: "invalid_request",
+        error_description: "invalid credentials",
+      });
     }
 
     // validate password
@@ -123,7 +137,7 @@ const token = async (req: Request, res: Response): Promise<Response> => {
     } else {
       return res
         .status(401)
-        .json({ error: "invalid_request", message: "invalid password" });
+        .json({ error: "invalid_request", message: "invalid credentials" });
     }
   } catch (error) {
     return res.status(500).json({ error: "server_error" });
@@ -134,7 +148,9 @@ const resource = async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array() });
+      return res
+        .status(401)
+        .json({ error: "invalid_token", error_description: errors.array() });
     }
     const user = req.user;
     const rawToken = req.header("authorization") || "";

@@ -33,7 +33,12 @@ const middlewares = {
               where: { id: accessToken.userId },
             });
             if (!user) {
-              return res.status(404).json({ error: "user not found" });
+              return res
+                .status(401)
+                .json({
+                  error: "invalid_request",
+                  error_description: "invalid credentials",
+                });
             }
             req.user = user;
             next();
