@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  node:
+    container_name: tm1-oauth
+    image: node-test:1.0.0
+    build:
+      context: .
+    ports:
+      - "$PORT:23070"
+    depends_on:
+      - db
+  db:
+    container_name: db
+    image: "postgres:12"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+    volumes:
+      - pgdata1:/var/lib/postgresql/data
+
+volumes:
+  pgdata1: {}
