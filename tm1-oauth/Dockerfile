@@ -16,6 +16,9 @@ RUN npm ci
 # Bundle app source
 COPY . .
 
+# generate prisma client
+RUN npm run generate
+
 EXPOSE 8080
 
 RUN npm run build

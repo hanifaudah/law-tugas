@@ -3,18 +3,18 @@ version: "3.8"
 services:
   node:
     container_name: tm1-oauth
-    image: node-test:1.0.0
+    image: node:16
     build:
       context: .
     ports:
-      - "$PORT:23070"
+      - "$PORT:$TARGET_PORT"
     depends_on:
       - db
   db:
     container_name: db
     image: "postgres:12"
     ports:
-      - "5432:5432"
+      - "$POSTGRES_PORT:$POSTGRES_PORT"
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD

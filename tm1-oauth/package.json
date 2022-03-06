@@ -4,6 +4,7 @@
   "description": "Tugas Mandiri LAW Materi OAuth",
   "main": "src/index.js",
   "scripts": {
+    "generate": "prisma generate",
     "studio": "prisma studio",
     "build": "tsc",
     "start": "nodemon dist/index.js",
