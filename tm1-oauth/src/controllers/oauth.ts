@@ -49,7 +49,9 @@ const register = async (req: Request, res: Response): Promise<Response> => {
     const userExists =
       (await prisma.user.findUnique({ where: { username } })) !== null;
     if (userExists) {
-      return res.status(401).json({ error: "user_exists" });
+      return res
+        .status(401)
+        .json({ error: "invalid_request", error_description: "user exists" });
     }
 
     // hash password

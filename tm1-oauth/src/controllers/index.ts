@@ -34,8 +34,8 @@ const middlewares = {
             });
             if (!user) {
               return res.status(401).json({
-                error: "invalid_request",
-                error_description: "invalid credentials",
+                error: "invalid_token",
+                error_description: "please use a valid access token",
               });
             }
             req.user = user;
