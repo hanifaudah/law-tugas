@@ -3,8 +3,11 @@
 # start db
 sudo service postgresql start
 
-# server setup
+# install dep
 npm ci
+
+# server setup
+npx tsc
 npx prisma migrate
 npx prisma generate
 tsc
