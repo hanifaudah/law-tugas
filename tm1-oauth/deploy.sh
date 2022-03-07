@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# stop server
+pm2 stop dist/index.js
+
 # start db
 sudo service postgresql start
 
@@ -8,7 +11,7 @@ npm ci
 
 # server setup
 npx tsc
-npx prisma migrate
+npx prisma migrate deploy
 npx prisma generate
 tsc
 
