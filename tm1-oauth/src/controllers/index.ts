@@ -6,7 +6,7 @@ import { Token, User } from "../../prisma/generated/client";
 
 const middlewares = {
   validateToken: [
-    header("content-type").equals("application/json"),
+    header("content-type").equals("application/x-www-form-urlencoded"),
     header("authorization")
       .exists()
       .withMessage("no token provided")
