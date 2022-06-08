@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 from os import getenv
 from dotenv import load_dotenv
 # db
@@ -21,7 +21,10 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/", response_model=schemas.Mahasiswa)
+@app.post("/")
 def update_mahasiswa(mahasiswa: schemas.MahasiswaCreate, db: Session = Depends(get_db)):
-    crud.update_mahasiswa(db=db, mahasiswa=mahasiswa)
-    return { "status": "OK" }
+    try:
+        crud.update_mahasiswa(db=db, mahasiswa=mahasiswa)
+        return { "status": "OK" }
+    except Exception as e:
+        return e

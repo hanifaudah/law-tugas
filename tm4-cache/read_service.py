@@ -21,9 +21,9 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/{npm}", response_model=schemas.Mahasiswa)
+@app.get("/{npm}")
 def read_mahasiswa_by_npm(npm:str, db: Session = Depends(get_db)):
     db_mahasiswa = crud.get_mahasiswa_by_npm(db, npm=npm)
     if not db_mahasiswa:
         raise HTTPException(status_code=400, detail="Mahasiswa not found")
-    return db_mahasiswa
+    return { "status": "OK", "npm": db_mahasiswa.npm, "nama": db_mahasiswa.nama }
