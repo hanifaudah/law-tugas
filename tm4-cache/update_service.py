@@ -12,7 +12,7 @@ load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(root_path=getenv("ROOT_PATH"))
+app = FastAPI(root_path=getenv("UPDATE_SERVICE_ROOT_PATH"))
 
 # setup db
 def get_db():
