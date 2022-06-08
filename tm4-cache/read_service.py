@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from db import crud, models, schemas
 from db.database import SessionLocal, engine
+import uvicorn
 
 load_dotenv()
 
@@ -27,3 +28,6 @@ def read_mahasiswa_by_npm(npm:str, db: Session = Depends(get_db)):
     if not db_mahasiswa:
         raise HTTPException(status_code=400, detail="Mahasiswa not found")
     return { "status": "OK", "npm": db_mahasiswa.npm, "nama": db_mahasiswa.nama }
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=3005)

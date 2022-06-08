@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from db import crud, models, schemas
 from db.database import SessionLocal, engine
+import uvicorn
 
 load_dotenv()
 
@@ -28,3 +29,6 @@ def update_mahasiswa(mahasiswa: schemas.MahasiswaCreate, db: Session = Depends(g
         return { "status": "OK" }
     except Exception as e:
         return e
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=3006)
