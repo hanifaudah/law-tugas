@@ -31,7 +31,7 @@ def read_mahasiswa_by_npm(npm:str, db: Session = Depends(get_db)):
 
 @app.get("/{npm}/{trx_id}")
 def _read_mahasiswa_by_npm(npm:str, trx_id:str, db: Session = Depends(get_db)):
-    return read_mahasiswa_by_npm(npm, db: Session = Depends(get_db))
+    return read_mahasiswa_by_npm(npm, db)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=3005)
