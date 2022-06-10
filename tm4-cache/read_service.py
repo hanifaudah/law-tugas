@@ -23,7 +23,8 @@ def get_db():
         db.close()
 
 @app.get("/{npm}")
-def read_mahasiswa_by_npm(npm:str, db: Session = Depends(get_db)):
+@app.get("/{npm}/{trx_id}")
+def read_mahasiswa_by_npm(npm:str, trx_id:str, db: Session = Depends(get_db)):
     db_mahasiswa = crud.get_mahasiswa_by_npm(db, npm=npm)
     if not db_mahasiswa:
         raise HTTPException(status_code=400, detail="Mahasiswa not found")
