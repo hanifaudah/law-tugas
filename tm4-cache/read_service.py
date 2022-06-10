@@ -23,12 +23,15 @@ def get_db():
         db.close()
 
 @app.get("/{npm}")
-@app.get("/{npm}/{trx_id}")
-def read_mahasiswa_by_npm(npm:str, trx_id:str, db: Session = Depends(get_db)):
+def read_mahasiswa_by_npm(npm:str, db: Session = Depends(get_db)):
     db_mahasiswa = crud.get_mahasiswa_by_npm(db, npm=npm)
     if not db_mahasiswa:
         raise HTTPException(status_code=400, detail="Mahasiswa not found")
     return { "status": "OK", "npm": db_mahasiswa.npm, "nama": db_mahasiswa.nama }
+
+@app.get("/{npm}/{trx_id}")
+def _read_mahasiswa_by_npm(npm:str, trx_id:str, db: Session = Depends(get_db)):
+    return read_mahasiswa_by_npm(npm, db: Session = Depends(get_db))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=3005)
